@@ -20,3 +20,4 @@ use App\Http\Controllers\KategoriController;
 // });
 
 Route::get('/kategori', [App\Http\Controllers\KategoriController::class, 'index']);
+Route::get('/berita', [App\Http\Controllers\BeritaController::class, 'index']);
