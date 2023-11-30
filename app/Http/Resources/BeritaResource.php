@@ -17,10 +17,10 @@ class BeritaResource extends JsonResource
     {
         return [
             'id_berita' => $this->id_berita,
-            'judul_berita' => $this->judul,
+            'judul' => $this->judul,
             'isi' => $this->content,
             'kategori' => $this->nama_kategori,
-            'tanggal' => $this->created_at,
+            'tanggal' => date_format($this->created_at, 'd-m-Y H:i:s'),
             'penulis' => $this->username,
             'gambar' => $this->gambar,
 
