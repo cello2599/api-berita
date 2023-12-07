@@ -84,35 +84,9 @@ class BeritaController extends Controller
             'content' => 'required',
             'kategori' => 'required',
         ]);
-
-        //jika tidak melakukan update gambar
-        if($request->file == null){
-            $berita = BeritaModel::FindOrFail($id);
-            $filename = $berita->gambar;
-        }
-        //jika melakukan update gambar
-        else{
-            //hapus gambar lama
-            $berita = BeritaModel::FindOrFail($id);
-            Storage::delete('public/images/' . $berita->gambar);
-
-            $extension = $request->file->extension();
-            //pengujian apakah file gambar atau tidak
-            if($extension == 'jpg' || $extension == 'png' || $extension == 'jpeg'){
-                $filename = time() . '.' . $extension;
-                Storage::putfileAs('public/images', $request->file, $filename);
-            }
-            //jika bukan gambar
-            else{
-                return response()->json([
-                    'message' => 'File yang diupload bukan gambar'
-                ]);
-            }
-        }
         
-        $request['gambar'] = $filename;
-        $request['penulis'] = Auth::user()->id;
         $berita = BeritaModel::FindOrFail($id);
+        $request['penulis'] = Auth::user()->id;
         // jika user yang login bukan penulis berita
         if ($request['penulis'] != $berita->penulis) {
             return response()->json([
@@ -120,6 +94,32 @@ class BeritaController extends Controller
             ]);
         }
         else{
+            //jika tidak melakukan update gambar
+            if($request->file == null){
+                $berita = BeritaModel::FindOrFail($id);
+                $filename = $berita->gambar;
+            }
+            //jika melakukan update gambar
+            else{
+                //hapus gambar lama
+                $berita = BeritaModel::FindOrFail($id);
+                Storage::delete('public/images/' . $berita->gambar);
+
+                $extension = $request->file->extension();
+                //pengujian apakah file gambar atau tidak
+                if($extension == 'jpg' || $extension == 'png' || $extension == 'jpeg'){
+                    $filename = time() . '.' . $extension;
+                    Storage::putfileAs('public/images', $request->file, $filename);
+                }
+                //jika bukan gambar
+                else{
+                    return response()->json([
+                        'message' => 'File yang diupload bukan gambar'
+                    ]);
+                }
+            }
+        $request['gambar'] = $filename;
+        
         $berita->update($request->all());
         $berita = BeritaModel::join('kategori', 'berita.kategori', '=', 'kategori.id_kategori')
             ->join('users', 'berita.penulis', '=', 'users.id')

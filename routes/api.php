@@ -23,15 +23,19 @@ Route::post('/login', [App\Http\Controllers\AuthController::class, 'login']);
 //make middleware
 Route::middleware(['auth:sanctum'])->group(function () {
 
-    // Route::get('/user', function (Request $request) {
-    //     return $request->user();
-    // });
-    Route::post('/logout', [App\Http\Controllers\AuthController::class, 'logout']);
-    Route::post('/berita', [App\Http\Controllers\BeritaController::class, 'store']);
-    Route::post('/berita/{id}', [App\Http\Controllers\BeritaController::class, 'update']);
-    Route::delete('/berita/{id}', [App\Http\Controllers\BeritaController::class, 'destroy']);
+        Route::post('/logout', [App\Http\Controllers\AuthController::class, 'logout']);
 
-});
+        //kategori
+        Route::post('/kategori', [App\Http\Controllers\KategoriController::class, 'store']);
+        Route::post('/kategori/{id}', [App\Http\Controllers\KategoriController::class, 'update']);
+        Route::delete('/kategori/{id}', [App\Http\Controllers\KategoriController::class, 'destroy']);
+        
+        //berita
+        Route::post('/berita', [App\Http\Controllers\BeritaController::class, 'store']);
+        Route::post('/berita/{id}', [App\Http\Controllers\BeritaController::class, 'update']);
+        Route::delete('/berita/{id}', [App\Http\Controllers\BeritaController::class, 'destroy']);
+        
+    });
 
 
 Route::get('/kategori', [App\Http\Controllers\KategoriController::class, 'index']);
