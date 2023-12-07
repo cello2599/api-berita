@@ -34,6 +34,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/berita', [App\Http\Controllers\BeritaController::class, 'store']);
         Route::post('/berita/{id}', [App\Http\Controllers\BeritaController::class, 'update']);
         Route::delete('/berita/{id}', [App\Http\Controllers\BeritaController::class, 'destroy']);
+
+        //komentar dari id berita
+        Route::post('/komen/{id}', [App\Http\Controllers\KomenController::class, 'store']);
+        //komentar dari id komen
+        Route::patch('/komen/{id}/edit', [App\Http\Controllers\KomenController::class, 'update'])->middleware('pemilikKomentar');
+        Route::delete('/komen/{id}', [App\Http\Controllers\KomenController::class, 'destroy'])->middleware('pemilikKomentar');
         
     });
 
