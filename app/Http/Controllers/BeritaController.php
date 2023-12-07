@@ -7,6 +7,7 @@ use App\Models\BeritaModel;
 use App\Http\Resources\BeritaResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class BeritaController extends Controller
 {
@@ -91,6 +92,10 @@ class BeritaController extends Controller
         }
         //jika melakukan update gambar
         else{
+            //hapus gambar lama
+            $berita = BeritaModel::FindOrFail($id);
+            Storage::delete('public/images/' . $berita->gambar);
+
             $extension = $request->file->extension();
             //pengujian apakah file gambar atau tidak
             if($extension == 'jpg' || $extension == 'png' || $extension == 'jpeg'){
@@ -107,23 +112,23 @@ class BeritaController extends Controller
         
         $request['gambar'] = $filename;
         $request['penulis'] = Auth::user()->id;
-
-        $berita = BeritaModel::FindOrFail($request->$id);
-        //jika user yang login bukan penulis berita
+        $berita = BeritaModel::FindOrFail($id);
+        // jika user yang login bukan penulis berita
         if ($request['penulis'] != $berita->penulis) {
             return response()->json([
                 'message' => 'Anda tidak memiliki akses untuk mengubah data ini'
             ]);
         }
-        //join table
+        else{
         $berita->update($request->all());
         $berita = BeritaModel::join('kategori', 'berita.kategori', '=', 'kategori.id_kategori')
             ->join('users', 'berita.penulis', '=', 'users.id')
             ->select('berita.*', 'kategori.nama_kategori', 'users.username')
-            ->where('berita.id_berita', $id)
+            ->where('berita.id_berita', '=', $berita->id_berita)
             ->first();
 
         return new BeritaResource($berita);
+        }
     }
 
     //get data by kategori
